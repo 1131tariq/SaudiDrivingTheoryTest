@@ -1,0 +1,56 @@
+//
+//  ContentView.swift
+//  SaudiDrivingTheoryTest
+//
+//  Created by Tareq Batayneh on 11/01/2026.
+//
+
+import SwiftUI
+
+struct ContentView: View {
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
+    @AppStorage("language") private var language: String = "en"
+    
+    @State private var showSplash = true
+    
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+    @EnvironmentObject var purchaseManager: PurchaseManager   // ✅ added
+    
+    var body: some View {
+        ZStack {
+            if showSplash {
+                SplashScreenView()
+            } else {
+                if purchaseManager.hasRemovedAds || networkMonitor.isConnected {
+                    NavigationStack {
+                        if hasSeenOnboarding {
+                            MainView()
+                        } else {
+                            OnboardingView {
+                                hasSeenOnboarding = true
+                            }
+                        }
+                    }
+                    .onAppear {
+                        LocalizedBundle.setLanguage(language)
+                    }
+                } else {
+                    NoConnectionView()
+                }
+            }
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                withAnimation {
+                    showSplash = false
+                }
+            }
+        }
+    }
+}
+
+#Preview {
+    ContentView()
+        .environmentObject(NetworkMonitor())
+        .environmentObject(PurchaseManager())
+}
