@@ -15,7 +15,7 @@ final class PurchaseManager: ObservableObject {
     @Published private(set) var hasRemovedAds = false
     @Published private(set) var products: [Product] = []
     
-    private let removeAdsID = "BataynehInc.JordanDrivingTheoryTestApp.removeads1"
+    private let removeAdsID = "BataynehInc.SaudiDrivingTheoryTestApp.removeads1"
     private var updatesTask: Task<Void, Never>? = nil
 
     init() {
